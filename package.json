@@ -8,11 +8,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "dat.gui": "^0.7.9",
     "three": "^0.137.5",
     "vue": "^3.2.25",
     "vue-router": "^4.0.13"
   },
   "devDependencies": {
+    "@types/dat.gui": "^0.7.7",
     "@types/three": "^0.137.0",
     "@vitejs/plugin-vue": "^2.2.0",
     "less": "^4.1.3",

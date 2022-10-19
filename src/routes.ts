@@ -1,11 +1,13 @@
 import type { RouteRecordRaw } from 'vue-router'
-import Introduce from './views/introduce.vue'
-import Basic from './views/basic.vue'
-import Shadow from './views/shadow.vue'
+import Introduce from './views/01-introduce.vue'
+import Basic from './views/02-basic.vue'
+import Shadow from './views/03-shadow.vue'
+import Particles from './views/04-particles.vue'
 
 export const routes:RouteRecordRaw[] = [
   {'path': '/introduce', component: Introduce },
   {'path': '/basic', component: Basic },
   {'path': '/shadow', component: Shadow },
+  {'path': '/particles', component: Particles },
 ]
 

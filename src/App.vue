@@ -2,9 +2,10 @@
   <div class="main-conatiner">
     <div class="menus" v-show="isHome">
       <div class="menus-inner">
-        <div class="menus-item"><router-link to="/introduce">入门示例</router-link></div>
-        <div class="menus-item"><router-link to="/basic">宇宙星球</router-link></div>
-        <div class="menus-item"><router-link to="/shadow">光与影</router-link></div>
+        <div class="menus-item"><router-link to="/introduce">01 入门示例</router-link></div>
+        <div class="menus-item"><router-link to="/basic">02 宇宙星球</router-link></div>
+        <div class="menus-item"><router-link to="/shadow">03 光与影</router-link></div>
+        <div class="menus-item"><router-link to="/particles">04 迷失太空</router-link></div>
       </div>
     </div>
     <router-view></router-view>
