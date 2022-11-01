@@ -511,9 +511,9 @@ onMounted(() => {
     margin-bottom: 24px;
     text-shadow: 1px 1px 1px #fffc00, 0px 2px 2px #fffc00, 0px 4px 8px #fffc00;
     animation: fadeUp 1s linear 1s;
-  animation-fill-mode: forwards;
-  opacity: 0;
-  transform: translateY(20px);
+    animation-fill-mode: forwards;
+    opacity: 0;
+    transform: translateY(20px);
   }
   .subtitle {
     font-size: 40px;
