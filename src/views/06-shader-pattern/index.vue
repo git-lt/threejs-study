@@ -8,17 +8,16 @@
 import { ref, onMounted } from 'vue'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import * as dat from 'dat.gui'
+// import * as dat from 'dat.gui'
 import { addWindowResizeEvent } from '../../utils/three-helper'
-// // @ts-ignore;
-// import rawFragmentShader from './raw-shader-glsl/fragment.glsl?raw'
-// // @ts-ignore;
-// import rawVertexShader from './raw-shader-glsl/vertex.glsl?raw'
-
 // @ts-ignore;
 import fragmentShader from './shader-glsl/fragment.glsl?raw'
 // @ts-ignore;
 import vertexShader from './shader-glsl/vertex.glsl?raw'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
+
 
 const sceneRef = ref<HTMLCanvasElement>();
 
@@ -35,13 +34,14 @@ onMounted(() => {
   const renderer = new THREE.WebGLRenderer({ canvas })
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+  renderer.autoClear = false;
 
   // ## Scene
   const scene = new THREE.Scene();
-
+ 
   // ## Camera
   const camera = new THREE.PerspectiveCamera(75, aspect, .1, 1000);
-  camera.position.set(1, 0, 5);
+  camera.position.set(3, 1, 4);
   scene.add(camera);
 
   // Controls
@@ -51,73 +51,61 @@ onMounted(() => {
   // 页面适配
   addWindowResizeEvent(renderer, camera, sizes);
 
-
   /**
    * 原始着色器材质
    * RawShaderMaterial
    */
-  const textureLoader = new THREE.TextureLoader();
-
-  /**
-   * 着色器材质
-   * ShaderMaterial
-   */
-  // const materail = new THREE.RawShaderMaterial({
-  //   side: THREE.DoubleSide,
-  //   vertexShader: rawVertexShader,
-  //   fragmentShader: rawFragmentShader,
-  //   uniforms: {
-  //     uFrequency: { value: new THREE.Vector2(10, 5)},
-  //     uTime: { value: 0 },
-  //     uColor: { value: new THREE.Color('orange')},
-  //     uTexture: { value: textureLoader.load('/public/images/flag.png')}
-  //   }
-  // })
-
   const materail = new THREE.ShaderMaterial({
     side: THREE.DoubleSide,
     vertexShader: vertexShader,
     fragmentShader: fragmentShader,
-    uniforms: {
-      uFrequency: { value: new THREE.Vector2(10, 5)},
-      uTime: { value: 0 },
-      uColor: { value: new THREE.Color('orange')},
-      uTexture: { value: textureLoader.load('/public/images/flag.png')}
-    }
   })
 
   const geometry = new THREE.PlaneBufferGeometry(1, 1, 32, 32);
-  const count = geometry.attributes.position.count;
-  const randoms = new Float32Array(count);
-
-  for(let i = 0; i < count; i++){
-    randoms[i] = Math.random();
-  }
-  geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
-
-
   const mesh = new THREE.Mesh(geometry, materail);
-  mesh.scale.y = 2/ 3;
-
   scene.add(mesh)
-  
-  const clock = new THREE.Clock();
-  function tick() {
-    const elapsedTime = clock.getElapsedTime();
 
+
+  const sphereMesh = new THREE.Mesh(
+    new THREE.IcosahedronBufferGeometry(1, 64),
+    materail,
+  )
+  sphereMesh.position.setX(2);
+  scene.add(sphereMesh);
+  
+  /**
+   * 辉光效果
+   */
+
+  const renderScene = new RenderPass(scene, camera);
+  const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, .4, .85);
+  bloomPass.threshold = 0;
+  bloomPass.strength = 2.2;
+  bloomPass.radius = .2;
+  const bloomComposer = new EffectComposer(renderer);
+  bloomComposer.renderToScreen = true;
+  bloomComposer.addPass(renderScene);
+  bloomComposer.addPass(bloomPass);
+  
+
+  // const clock = new THREE.Clock();
+  function tick() {
+    // const elapsedTime = clock.getElapsedTime();
+    sphereMesh && (sphereMesh.rotation.y += .01);
+    sphereMesh && (sphereMesh.rotation.x += .005);
+
+    bloomComposer && bloomComposer.render();
     controls.update();
     renderer.render(scene, camera)
-    materail.uniforms.uTime.value = elapsedTime;
     requestAnimationFrame(tick)
   }
 
   // 开始渲染
   tick();
 
-
-  const gui = new dat.GUI();
-  gui.add(materail.uniforms.uFrequency.value, 'x', 0, 20, .01).name('frequencyX')
-  gui.add(materail.uniforms.uFrequency.value, 'y', 0, 20, .01).name('frequencyY')
+  // const gui = new dat.GUI();
+  // gui.add(materail.uniforms.uFrequency.value, 'x', 0, 20, .01).name('frequencyX')
+  // gui.add(materail.uniforms.uFrequency.value, 'y', 0, 20, .01).name('frequencyY')
 
 })
 

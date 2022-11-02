@@ -7,6 +7,7 @@
         <div class="menus-item"><router-link to="/shadow">03 光与影</router-link></div>
         <div class="menus-item"><router-link to="/particles">04 迷失太空</router-link></div>
         <div class="menus-item"><router-link to="/shader">05 着色器基础</router-link></div>
+        <div class="menus-item"><router-link to="/shader-pattern">06 着色器图案</router-link></div>
       </div>
     </div>
     <router-view></router-view>
